@@ -1,0 +1,23 @@
+{
+  "name": "Crovidae_Engine",
+  "private": true,
+  "version": "0.0.3",
+  "description": "A Game Engine",
+  "dependencies": {
+  	"express":"4.9.0",
+  	"socket.io":"1.1.0",
+    "lodash":"2.4.1",
+    "imagemagick-native":"1.2.2",
+    "mongoose":"3.8.16",
+    "chalk":"0.5.1",
+    "mathjs":"1.0.1"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "debug": "node debug app.js"
+  },
+  "main": "app.js",
+  "repository": "",
+  "author": "",
+  "license": ""
+}

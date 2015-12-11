@@ -1,0 +1,176 @@
+<!DOCTYPE html5>
+<html>
+<head>
+  <title>Covidae MUD System</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.css">
+
+  <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+  <script type="text/javascript" src="/socket.io/socket.io-flash.js"></script>
+  <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/lodash-3.10.0.js"></script>
+  <script type="text/javascript" src="js/async.min.js"></script>
+  <script type="text/javascript" src="js/mapSystem.js"></script>
+  
+  <style>
+    /*html, body, *{ margin:0; padding:0; }*/
+
+    body{
+      color:white;
+      background-color:black;
+    }
+
+    .admin{
+      color: #AA0000;
+      font-weight: bold;
+    }
+
+    #inputRow{
+      position:fixed;
+      bottom:0;
+      width:100%;
+    }
+
+    .row{
+      margin:0;
+      padding:0;
+    }
+
+    #screen{
+      /*width:100%;
+      height:100%;*/
+      background-color:pink;
+    }
+
+    #chatbox{
+      position: fixed;
+      background-color: rgba(0,0,0,.75);
+      border-radius: 5px;
+      border:1px solid white;
+      bottom:4.5em;
+      left:2em;
+      width:25%;
+      height:200px;
+      max-height: 200px;
+      padding:15px 0;
+    }
+
+    @media screen and (max-width: 640px){
+      #chatbox{
+        bottom:4.5em;
+        left:2em;
+        width:50%;
+        height:50px;
+        max-height: 50px;
+        padding: 5px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="screen" width=1280 height=720></canvas>
+  <div class="container-fluid">
+    <!-- 1280 x 720 -->
+    <div id="chatbox">
+      <div id="textScreen" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        
+      </div> 
+    </div>
+    <div id="inputRow">
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <div class="input-group">
+            <input id="Input" type="text" class="form-control">
+            <span class="input-group-btn">
+              <button id="Submit" class="btn btn-primary" type="button">Send</button>
+            </span>
+          </div> 
+        </div> 
+      </div>
+      <div class="row">
+        <div id="Footer" class="col-lg-12 col-md-12 col-sm-12 col-xs-12"><span>FOOTER DATA HERE</span></div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<script type="text/javascript">
+    //** Game Data Bits
+    var tileWidth = 16;
+    var tileHeight = 16;
+
+    var vpWidth = 30;
+    var vpHeight = 15;
+
+    var tileCount = 0;
+    var loadedTileCount = 0;
+    var tiles = [];
+
+    var canvas = document.getElementById("screen");
+    var context = canvas.getContext("2d");
+    //**/
+
+    $("document").ready(function(){
+      var socket = io.connect();
+
+      socket.on("connection",function(data){
+        $("#textScreen").append("<span>"+data+"</span><br />");
+        socket.emit("startMap","map1");
+      });
+
+      socket.on("render",function(data){
+        $("#textScreen").append("<span>Rendering Map: "+data.name+"</span><br />");
+
+        basicMapRender(data);
+      });
+
+      socket.on("message",function(data){
+        $("#textScreen").append("<span>"+data+"</span></br>")
+      });
+
+      socket.on("playerData",function(data){
+        var display = data.displayName;
+
+        if(data.isAdmin){
+          display = "<span class=\"admin\">"+display+"</span>"
+        }
+
+        $("#textScreen").append("<span>"+display+"</span><br />");
+      });
+
+      $("#Submit").click(function(event){
+        var text = $("#Input").val();
+        socket.emit("input",text);
+        $("#Input").val("");
+      });
+
+      $("#Input").keypress(function(event){
+        if(event.keyCode == 13){
+          $("#Submit").click();
+        }
+      });
+
+      $("body").keypress(function(event){
+        //console.log(event);
+        if(event.key == "ArrowUp"){
+          console.log("Going Up");
+        }
+        if(event.key == "ArrowLeft"){
+          console.log("Going Left");
+        }
+        if(event.key == "ArrowDown"){
+          console.log("Going Down");
+        }
+        if(event.key == "ArrowRight"){
+          console.log("Going Right");
+        }
+      });
+
+    });
+  </script>
+
+</html>
